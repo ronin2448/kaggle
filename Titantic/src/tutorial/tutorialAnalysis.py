@@ -2,6 +2,7 @@
 Created on Jun 22, 2014
 
 @author: Domingo
+
 '''
 
 import csv as csv
