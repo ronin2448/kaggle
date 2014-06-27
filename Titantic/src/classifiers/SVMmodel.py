@@ -73,22 +73,27 @@ header = test_file_object.next()
 
 #Import from the random forest package
 from sklearn.ensemble import RandomForestClassifier
+from sklearn import svm
+
+clf = svm.SVC()
+clf = clf.fit(train_data[0::,1::], train_data[0::,0])
+output = clf.predict(test_data)
 
 #create the random forest object which will include all the parameters for fit
-forest = RandomForestClassifier(n_estimators = 100)
+#forest = RandomForestClassifier(n_estimators = 100)
 
 #Fit the training data to the Survived labels and create the decision trees
-forest = forest.fit(train_data[0::,1::], train_data[0::,0])
+#forest = forest.fit(train_data[0::,1::], train_data[0::,0])
 
 print("Random forest ensemble built")
 
 #Take the same decision trees and run it on the test data
-output = forest.predict(test_data)
+#output = forest.predict(test_data)
 
 print("Predictions made")
 
 
-prediction_file = open('C:/Users/Domingo/Documents/code_workspace/python_practice/Kaggle_Python/Titantic/out/randomForestmodel.csv', "wb")
+prediction_file = open('C:/Users/Domingo/Documents/code_workspace/python_practice/Kaggle_Python/Titantic/out/SVMmodel.csv', "wb")
 prediction_file_object = csv.writer(prediction_file)
     
 prediction_file_object.writerow(["PassengerId", "Survived"])
