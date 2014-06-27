@@ -34,7 +34,7 @@ def preprocessData(fileName, dropMissingValues):
     df['Age*Class'] = df.AgeFill * df.Pclass
 
 
-    df = df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'Embarked'], axis = 1)
+    df = df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'Embarked', 'Fare'], axis = 1)
     df = df.drop(['Age'], axis =1)
     
     print("Records before deleting.. %d" % len(df))
