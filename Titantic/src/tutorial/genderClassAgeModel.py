@@ -14,6 +14,7 @@ if __name__ == '__main__':
     
     header = csv_file_object.next()   #next() skips the first line which is the header
     
+    
     data = []  # create a list object called data
     
     for row in csv_file_object:
