@@ -45,7 +45,7 @@ def preprocessData(fileName, dropMissingValues):
     return final_data
 
 
-# For .read_csv always use header = 0 when you know row 0 is the header row
+# For .read_csv always use header=0 when you know row 0 is the header row
 train_data = 'C:/Users/Domingo/Documents/code_workspace/python_practice/Titantic_Machine_Learning/data/train.csv'
 test_data = 'C:/Users/Domingo/Documents/code_workspace/python_practice/Titantic_Machine_Learning/data/test.csv'
 
