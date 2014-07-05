@@ -32,6 +32,51 @@ def fixMissingAgeValues(df):
     return df
 
 
+def buildTitleVariables(df):
+    # Get Title from Name column
+    df['Title'] = df['Name'].str.split(',').str.get(1)
+    
+    #clean up Title column
+    df['Title'] = df['Title'].map(str.strip)
+    df['Title'] = df['Title'].str.split(' ').str.get(0)
+    df['Title'] = df['Title'].map(str.strip)
+    
+    #Map titles to numbers
+    df['Title_Code'] = pd.Categorical.from_array(df.Title).labels
+    return df
+
+    
+
+def fixMissingAgeValuesUsingTitles(df):
+    num_types_titles = int(len(df['Title'].value_counts()))
+
+    medAges = {}
+    for g in range(0,2):
+        for c in range(1,4):
+            for t in range(0,num_types_titles +1):
+                key = str(g) + str(c) + str(t)
+                medAges[key] = df[  (df['AgeIsNull']==0) & (df['Gender']==g) & (df['Pclass']==c)  & (df['Title_Code']==t) ]['Age'].median()
+    
+    import math
+    
+    #df['AgeFill'] = df['Age']
+    df['newAgeFill'] = df['AgeFill']
+
+
+    for g in range(0,2):
+        for c in range(1,4):
+            for t in range(0,num_types_titles +1):
+                key = str(g) + str(c) + str(t)
+                if math.isnan(medAges.get(key))==False:
+                    print " Adding %d" %medAges.get(key)
+                    #df.loc[  (df['AgeIsNull']==1) & (df['Gender']==g) & (df['Pclass']==c)  & (df['Title_Code']==t) ,'AgeFill'] = medAges.get(key)
+                    df.loc[  (df['AgeIsNull']==1) & (df['Gender']==g) & (df['Pclass']==c)  & (df['Title_Code']==t) ,'newAgeFill'] = medAges.get(key)
+
+    df.drop(['AgeFill'],axis=1)
+    
+    return df
+
+
 
 if __name__ == '__main__':
     pass
