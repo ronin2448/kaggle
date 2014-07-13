@@ -4,37 +4,33 @@ import numpy as np
 import pandas as pd
 import pylab as P
 
-import datacleaning as dc
 import sklearn.cross_validation as cv
 
+import datacleaning as dc
 
-#Import Classifiers for this model
+#Import from the random forest package
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 
 
-
-"""  thi module does blah """
 def preprocess_data(fileName, dropMissingValues):
-    print(fileName)
     df = pd.read_csv(fileName, header=0)
     
     print("Records read in.. %d" % len(df))
     
+    df = dc.recode_variables(df)
+    df = dc.replace_missing_age_values(df)
+    
     df['AgeIsNull'] = pd.isnull(df.Age).astype(int)
     
-    df = dc.recode_variables(df)
-    df = dc.add_title_variable(df)
-    df = dc.replace_missing_age_values(df)
-    df = dc.replace_missing_age_values_using_titles(df)
-    
-    
     df['FamilySize'] = df['SibSp'] + df['Parch']
+
     df['Age*Class'] = df.AgeFill * df.Pclass
 
 
-    df = df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'Embarked', 'Fare', 'Title'], axis = 1)
+
+    df = df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'Embarked', 'Fare'], axis = 1)
     df = df.drop(['Age'], axis =1)
     
     if dropMissingValues:
@@ -44,7 +40,6 @@ def preprocess_data(fileName, dropMissingValues):
     return final_data
 
 def write_results(outputFileName, outputDS, predictions):
-
     prediction_file = open(outputFileName, "wb")
     prediction_file_object = csv.writer(prediction_file)
     
@@ -61,12 +56,12 @@ def write_results(outputFileName, outputDS, predictions):
     prediction_file.close()
     print("Finished writing ouput")
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
+
     # For .read_csv always use header=0 when you know row 0 is the header row
     train_data = '../../data/train.csv'
     test_data = '../../data/test.csv'
     
-    # Preprocess Data by converting the files into data frames
     test_data_panda = preprocess_data(test_data, False) 
     train_data_panda = preprocess_data(train_data, True) 
     
@@ -78,7 +73,6 @@ if __name__ == '__main__':
     train_data = train_data_panda.values
     test_data = test_data_panda.values
     
-    
     print("\nTraining Data set built.  There are %d entries" % len(train_data))
     print("\nTest Data set built.  There are %d entries" % len(test_data))
     print("\norig Test Data set built.  There are %d entries" % len(test_data_panda_orig))
@@ -88,18 +82,25 @@ if __name__ == '__main__':
     target_set = train_data[0::,0]
     X_train, X_test, y_train, y_test = cv.train_test_split(training_set, target_set, test_size=0.4, random_state=0)
     
-    forest = RandomForestClassifier(n_estimators = 1000)
+    clf = svm.SVC()
+    clf = clf.fit(X_train, y_train)
+    output = clf.predict(test_data)
     
-    #Test Random Forest Ensemble
+    
+    
+    print(clf.score(X_test, y_test))
+    
+    forest = RandomForestClassifier(n_estimators = 1000)
+    #forest = forest.fit(X_train, y_train)
+    print("Random forest ensemble built")
+    #print(forest.score(X_test, y_test))
+    
     scores = cv.cross_val_score(forest, training_set, target_set, cv=10, scoring='f1')
+    #print(scores)
     print("Random Forest Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     
-    
     logReg = LogisticRegression()
-    logReg.fit(training_set, target_set)
     scores = cv.cross_val_score(logReg, training_set, target_set, cv=10, scoring='f1')
-    print("Logistic Regression Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    #print(scores)
     
-    output = logReg.predict(test_data)
-    print("Predictions made")
-    write_results('../../out/LogRegModelWithTitles.csv', test_data_panda_orig, output)
+    print("Logistic Regression Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))

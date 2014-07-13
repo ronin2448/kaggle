@@ -8,14 +8,14 @@ Created on Jun 29, 2014
 import numpy as np
 import pandas as pd
 
-def recodeVariables(df):
+def recode_variables(df):
     # Map gender column Female = > 0 and Male => 1
     df['Gender'] = df['Sex'].map( {'female':0 ,'male':1} ).astype(int)
     df['Embarked_class'] = df['Embarked'].map( {'C':0, 'Q':1, 'S':2})
     return df
 
 
-def fixMissingAgeValues(df):
+def replace_missing_age_values(df):
     median_ages = np.zeros((2,3))
     for i in range(0,2):
         for j in range(0,3):
@@ -32,7 +32,7 @@ def fixMissingAgeValues(df):
     return df
 
 
-def buildTitleVariables(df):
+def add_title_variable(df):
     # Get Title from Name column
     df['Title'] = df['Name'].str.split(',').str.get(1)
     
@@ -47,7 +47,7 @@ def buildTitleVariables(df):
 
     
 
-def fixMissingAgeValuesUsingTitles(df):
+def replace_missing_age_values_using_titles(df):
     num_types_titles = int(len(df['Title'].value_counts()))
 
     medAges = {}
@@ -69,7 +69,6 @@ def fixMissingAgeValuesUsingTitles(df):
                 key = str(g) + str(c) + str(t)
                 if math.isnan(medAges.get(key))==False:
                     print " Adding %d" %medAges.get(key)
-                    #df.loc[  (df['AgeIsNull']==1) & (df['Gender']==g) & (df['Pclass']==c)  & (df['Title_Code']==t) ,'AgeFill'] = medAges.get(key)
                     df.loc[  (df['AgeIsNull']==1) & (df['Gender']==g) & (df['Pclass']==c)  & (df['Title_Code']==t) ,'newAgeFill'] = medAges.get(key)
 
     df.drop(['AgeFill'],axis=1)
