@@ -21,7 +21,6 @@ def recode_variables(df):
     
     embarked_dummy_vars = pd.get_dummies(df['Embarked'], prefix="Embarked_")
     df = pd.concat([df, embarked_dummy_vars], axis=1)
-    #df = df.drop(['Embarked', 'Embarked_S'], axis=1)
     df = df.drop(['Embarked'], axis=1)
     
     return df

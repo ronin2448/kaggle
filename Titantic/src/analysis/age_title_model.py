@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pylab as P
 
-import datacleaning as dc
+import data_cleaning as dc
 import sklearn.cross_validation as cv
 
 

@@ -6,7 +6,7 @@ import pylab as P
 
 import sklearn.cross_validation as cv
 
-import datacleaning as dc
+import data_cleaning as dc
 
 #Import from the random forest package
 from sklearn import svm
@@ -40,22 +40,6 @@ def preprocess_data(fileName, dropMissingValues):
     final_data = df
     return final_data
 
-def write_results(outputFileName, outputDS, predictions):
-    prediction_file = open(outputFileName, "wb")
-    prediction_file_object = csv.writer(prediction_file)
-    
-    prediction_file_object.writerow(["PassengerId", "Survived"])
-
-
-    i = 0    
-    for row in outputDS.values:
-        passenger_id = str(int(row[0]))
-        result = predictions[i]
-        prediction_file_object.writerow([passenger_id, "%d" % result]) 
-        i = i+1
-    
-    prediction_file.close()
-    print("Finished writing ouput")
 
 if __name__ == '__main__':
 
