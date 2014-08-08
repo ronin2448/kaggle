@@ -12,6 +12,7 @@ import datacleaning as dc
 from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.grid_search import GridSearchCV
 
 
 def preprocess_data(fileName, dropMissingValues):
@@ -88,19 +89,27 @@ if __name__ == '__main__':
     
     
     
+    
     print(clf.score(X_test, y_test))
     
     forest = RandomForestClassifier(n_estimators = 1000)
+    
     #forest = forest.fit(X_train, y_train)
     print("Random forest ensemble built")
     #print(forest.score(X_test, y_test))
     
     scores = cv.cross_val_score(forest, training_set, target_set, cv=10, scoring='f1')
-    #print(scores)
+    
+    
     print("Random Forest Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     
-    logReg = LogisticRegression()
-    scores = cv.cross_val_score(logReg, training_set, target_set, cv=10, scoring='f1')
+    logReg_1 = LogisticRegression()
+    logReg_2 = LogisticRegression()
+    tuned_parameters = [ {'C': [0.5, 1, 5, 10, 50, 100, 500, 1000] }]
+    clf = GridSearchCV(logReg_1,  tuned_parameters, cv=10, scoring="f1")
+    clf.fit(X_train, y_train)
+    print(clf.best_estimator_)
+    scores = cv.cross_val_score(logReg_2, training_set, target_set, cv=10, scoring='f1')
     #print(scores)
-    
+    print(logReg_2.C)
     print("Logistic Regression Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))

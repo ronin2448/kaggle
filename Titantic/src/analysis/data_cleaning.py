@@ -9,13 +9,28 @@ import numpy as np
 import pandas as pd
 
 def recode_variables(df):
+    """Convert certain fields with strings into fields with integers.
+
+    Returns
+    -------
+    df : dataframe with re-coded variables added to it.
+    """
     # Map gender column Female = > 0 and Male => 1
     df['Gender'] = df['Sex'].map( {'female':0 ,'male':1} ).astype(int)
-    df['Embarked_class'] = df['Embarked'].map( {'C':0, 'Q':1, 'S':2})
+    #df['Embarked_class'] = df['Embarked'].map( {'C':0, 'Q':1, 'S':2})
+    
+    embarked_dummy_vars = pd.get_dummies(df['Embarked'], prefix="Embarked_")
+    df = pd.concat([df, embarked_dummy_vars], axis=1)
+    #df = df.drop(['Embarked', 'Embarked_S'], axis=1)
+    df = df.drop(['Embarked'], axis=1)
+    
     return df
 
 
 def replace_missing_age_values(df):
+    """Replace missing age values with the median age for people with the same gender and class.
+    
+    """
     median_ages = np.zeros((2,3))
     for i in range(0,2):
         for j in range(0,3):
@@ -43,6 +58,7 @@ def add_title_variable(df):
     
     #Map titles to numbers
     df['Title_Code'] = pd.Categorical.from_array(df.Title).labels
+    #df.get_dummies()
     return df
 
     
@@ -59,7 +75,6 @@ def replace_missing_age_values_using_titles(df):
     
     import math
     
-    #df['AgeFill'] = df['Age']
     df['newAgeFill'] = df['AgeFill']
 
 

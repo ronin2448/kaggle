@@ -34,7 +34,7 @@ def preprocess_data(fileName, dropMissingValues):
     df['Age*Class'] = df.AgeFill * df.Pclass
 
 
-    df = df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'Embarked', 'Fare', 'Title'], axis = 1)
+    df = df.drop(['Name', 'Sex', 'Ticket', 'Cabin', 'Fare', 'Title'], axis = 1)
     df = df.drop(['Age'], axis =1)
     
     if dropMissingValues:
@@ -95,11 +95,16 @@ if __name__ == '__main__':
     print("Random Forest Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     
     
-    logReg = LogisticRegression()
+    #logReg = LogisticRegression(C=0.003)
+    logReg = LogisticRegression(C=100, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, penalty='l2', random_state=None, tol=0.0001)
+
     logReg.fit(training_set, target_set)
-    scores = cv.cross_val_score(logReg, training_set, target_set, cv=10, scoring='f1')
+    #print(logReg.coef_)
+    scores = cv.cross_val_score(logReg, training_set, target_set, cv=10, scoring='f1', verbose=1)
+    print(logReg.coef_)
     print("Logistic Regression Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     
     output = logReg.predict(test_data)
     print("Predictions made")
-    write_results('../../out/LogRegModelWithTitles.csv', test_data_panda_orig, output)
+    write_results('../../out/RegLogRegModelWithTitles.csv', test_data_panda_orig, output)
